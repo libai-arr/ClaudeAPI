@@ -10,7 +10,7 @@ docker run -d \
   -p 8080:8080 \
   -e DATABASE_URL="postgres://user:pass@host:5432/sub2api" \
   -e REDIS_URL="redis://host:6379" \
-  weishaw/sub2api:latest
+  ghcr.io/libai-arr/sub2api:main
 ```
 
 ## Docker Compose
@@ -20,7 +20,7 @@ version: '3.8'
 
 services:
   sub2api:
-    image: weishaw/sub2api:latest
+    image: ${SUB2API_IMAGE:-ghcr.io/libai-arr/sub2api:main}
     ports:
       - "8080:8080"
     environment:
@@ -49,6 +49,8 @@ volumes:
   redis_data:
 ```
 
+Use `SUB2API_IMAGE` in your `.env` or compose override to pin a deployment to `main`, a release tag like `v1.2.3`, or a commit image like `sha-abcdef0`.
+
 ## Environment Variables
 
 | Variable | Description | Required | Default |
@@ -65,12 +67,12 @@ volumes:
 
 ## Tags
 
-- `latest` - Latest stable release
-- `x.y.z` - Specific version
-- `x.y` - Latest patch of minor version
-- `x` - Latest minor of major version
+- `main` - Latest image built from the main branch
+- `sha-<shortsha>` - Immutable image for a specific commit
+- `vX.Y.Z` - Specific release version
+- `latest` / `x.y` / `x` - Release tags published by the release workflow
 
 ## Links
 
-- [GitHub Repository](https://github.com/weishaw/sub2api)
-- [Documentation](https://github.com/weishaw/sub2api#readme)
+- [GitHub Repository](https://github.com/libai-arr/ClaudeAPI)
+- [Documentation](https://github.com/libai-arr/ClaudeAPI#readme)

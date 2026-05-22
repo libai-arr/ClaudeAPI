@@ -242,13 +242,14 @@ curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/install
 mkdir -p sub2api-deploy && cd sub2api-deploy
 
 # 下载并运行部署准备脚本
-curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/docker-deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/libai-arr/ClaudeAPI/main/deploy/docker-deploy.sh | bash
 
-# 启动服务
-docker compose up -d
+# 拉取镜像并启动服务
+docker-compose pull
+docker-compose up -d
 
 # 查看日志
-docker compose logs -f sub2api
+docker-compose logs -f sub2api
 ```
 
 **脚本功能：**
@@ -264,8 +265,8 @@ docker compose logs -f sub2api
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/Wei-Shaw/sub2api.git
-cd sub2api/deploy
+git clone https://github.com/libai-arr/ClaudeAPI.git
+cd ClaudeAPI/deploy
 
 # 2. 复制环境配置文件
 cp .env.example .env
@@ -273,6 +274,16 @@ cp .env.example .env
 # 3. 编辑配置（生成安全密码）
 nano .env
 ```
+
+**建议同时确认镜像来源：**
+
+```bash
+SUB2API_IMAGE=ghcr.io/libai-arr/sub2api:main
+```
+
+- 持续跟随最新主分支可保留 `:main`
+- 固定版本可改成 `:vX.Y.Z`
+- 回滚可改成 `:sha-xxxxxxx`
 
 **`.env` 必须配置项：**
 
@@ -312,16 +323,16 @@ mkdir -p data postgres_data redis_data
 
 # 5. 启动所有服务
 # 选项 A：本地目录版（推荐 - 易于迁移）
-docker compose -f docker-compose.local.yml up -d
+docker-compose -f docker-compose.local.yml up -d
 
 # 选项 B：命名卷版（简单设置）
-docker compose up -d
+docker-compose up -d
 
 # 6. 查看状态
-docker compose -f docker-compose.local.yml ps
+docker-compose -f docker-compose.local.yml ps
 
 # 7. 查看日志
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker-compose -f docker-compose.local.yml logs -f sub2api
 ```
 
 #### 部署版本对比
@@ -351,16 +362,18 @@ docker compose -f docker-compose.local.yml logs -f sub2api
 
 如果管理员密码是自动生成的，在日志中查找：
 ```bash
-docker compose -f docker-compose.local.yml logs sub2api | grep "admin password"
+docker-compose -f docker-compose.local.yml logs sub2api | grep "admin password"
 ```
 
 #### 升级
 
 ```bash
-# 拉取最新镜像并重建容器
-docker compose -f docker-compose.local.yml pull
-docker compose -f docker-compose.local.yml up -d
+# 拉取 .env 中 SUB2API_IMAGE 指定的镜像并重建容器
+docker-compose -f docker-compose.local.yml pull
+docker-compose -f docker-compose.local.yml up -d
 ```
+
+如需固定版本或回滚，先修改 `.env` 中的 `SUB2API_IMAGE`，再执行上面两条命令。
 
 #### 轻松迁移（本地目录版）
 
@@ -368,7 +381,7 @@ docker compose -f docker-compose.local.yml up -d
 
 ```bash
 # 源服务器
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 cd ..
 tar czf sub2api-complete.tar.gz sub2api-deploy/
 
@@ -378,23 +391,23 @@ scp sub2api-complete.tar.gz user@new-server:/path/
 # 新服务器
 tar xzf sub2api-complete.tar.gz
 cd sub2api-deploy/
-docker compose -f docker-compose.local.yml up -d
+docker-compose -f docker-compose.local.yml up -d
 ```
 
 #### 常用命令
 
 ```bash
 # 停止所有服务
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 
 # 重启
-docker compose -f docker-compose.local.yml restart
+docker-compose -f docker-compose.local.yml restart
 
 # 查看所有日志
-docker compose -f docker-compose.local.yml logs -f
+docker-compose -f docker-compose.local.yml logs -f
 
 # 删除所有数据（谨慎！）
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 rm -rf data/ postgres_data/ redis_data/
 ```
 
