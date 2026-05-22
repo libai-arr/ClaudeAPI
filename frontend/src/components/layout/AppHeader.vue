@@ -126,7 +126,7 @@
                   {{ t('nav.apiKeys') }}
                 </router-link>
 
-                <a
+                <!-- <a
                   v-if="authStore.isAdmin"
                   href="https://github.com/Wei-Shaw/sub2api"
                   target="_blank"
@@ -142,7 +142,7 @@
                     />
                   </svg>
                   {{ t('nav.github') }}
-                </a>
+                </a> -->
 
               </div>
 
