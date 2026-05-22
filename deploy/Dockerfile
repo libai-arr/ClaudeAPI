@@ -23,11 +23,12 @@ WORKDIR /app/frontend
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Install dependencies first (better caching)
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Copy frontend source and build
 COPY frontend/ ./
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN pnpm run build
 
 # -----------------------------------------------------------------------------
