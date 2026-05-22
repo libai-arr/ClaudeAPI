@@ -17,7 +17,7 @@ This directory contains files for deploying Sub2API on Linux servers.
 | `docker-compose.local.yml` | Docker Compose configuration (local directories, easy migration) |
 | `docker-deploy.sh` | **One-click Docker deployment script (recommended)** |
 | `.env.example` | Docker environment variables template |
-| `DOCKER.md` | Docker Hub documentation |
+| `DOCKER.md` | Container image and registry documentation |
 | `install.sh` | One-click binary installation script |
 | `install-datamanagementd.sh` | datamanagementd 一键安装脚本 |
 | `sub2api.service` | Systemd service unit file |
@@ -35,31 +35,33 @@ Use the automated preparation script for the easiest setup:
 
 ```bash
 # Download and run the preparation script
-curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/docker-deploy.sh | bash
+curl -sSL https://raw.githubusercontent.com/libai-arr/ClaudeAPI/main/deploy/docker-deploy.sh | bash
 
 # Or download first, then run
-curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/docker-deploy.sh -o docker-deploy.sh
+curl -sSL https://raw.githubusercontent.com/libai-arr/ClaudeAPI/main/deploy/docker-deploy.sh -o docker-deploy.sh
 chmod +x docker-deploy.sh
 ./docker-deploy.sh
 ```
 
 **What the script does:**
 - Downloads `docker-compose.local.yml` and `.env.example`
+- Sets `SUB2API_IMAGE` to the repository's GHCR `:main` image
 - Automatically generates secure secrets (JWT_SECRET, TOTP_ENCRYPTION_KEY, POSTGRES_PASSWORD)
 - Creates `.env` file with generated secrets
 - Creates necessary data directories (data/, postgres_data/, redis_data/)
-- **Displays generated credentials** (POSTGRES_PASSWORD, JWT_SECRET, etc.)
+- **Displays generated credentials** (SUB2API_IMAGE, POSTGRES_PASSWORD, JWT_SECRET, etc.)
 
 **After running the script:**
 ```bash
-# Start services
-docker compose -f docker-compose.local.yml up -d
+# Pull the configured image and start services
+docker-compose -f docker-compose.local.yml pull
+docker-compose -f docker-compose.local.yml up -d
 
 # View logs
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker-compose -f docker-compose.local.yml logs -f sub2api
 
 # If admin password was auto-generated, find it in logs:
-docker compose -f docker-compose.local.yml logs sub2api | grep "admin password"
+docker-compose -f docker-compose.local.yml logs sub2api | grep "admin password"
 
 # Access Web UI
 # http://localhost:8080
@@ -71,12 +73,15 @@ If you prefer manual control:
 
 ```bash
 # Clone repository
-git clone https://github.com/Wei-Shaw/sub2api.git
-cd sub2api/deploy
+git clone https://github.com/libai-arr/ClaudeAPI.git
+cd ClaudeAPI/deploy
 
 # Configure environment
 cp .env.example .env
-nano .env  # Set POSTGRES_PASSWORD and other required variables
+nano .env  # Set SUB2API_IMAGE, POSTGRES_PASSWORD, and other required variables
+
+# Suggested continuous-deploy image
+# SUB2API_IMAGE=ghcr.io/libai-arr/sub2api:main
 
 # Generate secure secrets (recommended)
 JWT_SECRET=$(openssl rand -hex 32)
@@ -87,11 +92,12 @@ echo "TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY}" >> .env
 # Create data directories
 mkdir -p data postgres_data redis_data
 
-# Start all services using local directory version
-docker compose -f docker-compose.local.yml up -d
+# Pull and start all services using local directory version
+docker-compose -f docker-compose.local.yml pull
+docker-compose -f docker-compose.local.yml up -d
 
 # View logs (check for auto-generated admin password)
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker-compose -f docker-compose.local.yml logs -f sub2api
 
 # Access Web UI
 # http://localhost:8080
@@ -105,6 +111,11 @@ docker compose -f docker-compose.local.yml logs -f sub2api
 | **docker-compose.yml** | Named volumes (/var/lib/docker/volumes/) | ⚠️ Requires docker commands | Simple setup, don't need migration |
 
 **Recommendation:** Use `docker-compose.local.yml` (deployed by `docker-deploy.sh`) for easier data management and migration.
+
+Set `SUB2API_IMAGE` in `.env` to control what gets deployed:
+- `ghcr.io/libai-arr/sub2api:main` for the latest main-branch build
+- `ghcr.io/libai-arr/sub2api:vX.Y.Z` for a pinned release
+- `ghcr.io/libai-arr/sub2api:sha-xxxxxxx` for a specific commit or rollback
 
 ### How Auto-Setup Works
 
@@ -121,7 +132,7 @@ When using Docker Compose with `AUTO_SETUP=true`:
 
 3. If `ADMIN_PASSWORD` is not set, check logs for the generated password:
    ```bash
-   docker compose logs sub2api | grep "admin password"
+   docker-compose logs sub2api | grep "admin password"
    ```
 
 ### Database Migration Notes (PostgreSQL)
@@ -162,23 +173,23 @@ For **local directory version** (docker-compose.local.yml):
 
 ```bash
 # Start services
-docker compose -f docker-compose.local.yml up -d
+docker-compose -f docker-compose.local.yml up -d
 
 # Stop services
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 
 # View logs
-docker compose -f docker-compose.local.yml logs -f sub2api
+docker-compose -f docker-compose.local.yml logs -f sub2api
 
 # Restart Sub2API only
-docker compose -f docker-compose.local.yml restart sub2api
+docker-compose -f docker-compose.local.yml restart sub2api
 
 # Update to latest version
-docker compose -f docker-compose.local.yml pull
-docker compose -f docker-compose.local.yml up -d
+docker-compose -f docker-compose.local.yml pull
+docker-compose -f docker-compose.local.yml up -d
 
 # Remove all data (caution!)
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 rm -rf data/ postgres_data/ redis_data/
 ```
 
@@ -186,23 +197,23 @@ For **named volumes version** (docker-compose.yml):
 
 ```bash
 # Start services
-docker compose up -d
+docker-compose up -d
 
 # Stop services
-docker compose down
+docker-compose down
 
 # View logs
-docker compose logs -f sub2api
+docker-compose logs -f sub2api
 
 # Restart Sub2API only
-docker compose restart sub2api
+docker-compose restart sub2api
 
 # Update to latest version
-docker compose pull
-docker compose up -d
+docker-compose pull
+docker-compose up -d
 
 # Remove all data (caution!)
-docker compose down -v
+docker-compose down -v
 ```
 
 ### Environment Variables
@@ -232,7 +243,7 @@ When using `docker-compose.local.yml`, all data is stored in local directories, 
 ```bash
 # On source server: Stop services and create archive
 cd /path/to/deployment
-docker compose -f docker-compose.local.yml down
+docker-compose -f docker-compose.local.yml down
 cd ..
 tar czf sub2api-complete.tar.gz deployment/
 
@@ -242,7 +253,7 @@ scp sub2api-complete.tar.gz user@new-server:/path/to/destination/
 # On new server: Extract and start
 tar xzf sub2api-complete.tar.gz
 cd deployment/
-docker compose -f docker-compose.local.yml up -d
+docker-compose -f docker-compose.local.yml up -d
 ```
 
 Your entire deployment (configuration + data) is migrated!
@@ -353,12 +364,12 @@ For production servers using systemd.
 ### One-Line Installation
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/libai-arr/ClaudeAPI/main/deploy/install.sh | sudo bash
 ```
 
 ### Manual Installation
 
-1. Download the latest release from [GitHub Releases](https://github.com/Wei-Shaw/sub2api/releases)
+1. Download the latest release from [GitHub Releases](https://github.com/libai-arr/ClaudeAPI/releases)
 2. Extract and copy the binary to `/opt/sub2api/`
 3. Copy `sub2api.service` to `/etc/systemd/system/`
 4. Run:
@@ -492,19 +503,19 @@ For **local directory version**:
 
 ```bash
 # Check container status
-docker compose -f docker-compose.local.yml ps
+docker-compose -f docker-compose.local.yml ps
 
 # View detailed logs
-docker compose -f docker-compose.local.yml logs --tail=100 sub2api
+docker-compose -f docker-compose.local.yml logs --tail=100 sub2api
 
 # Check database connection
-docker compose -f docker-compose.local.yml exec postgres pg_isready
+docker-compose -f docker-compose.local.yml exec postgres pg_isready
 
 # Check Redis connection
-docker compose -f docker-compose.local.yml exec redis redis-cli ping
+docker-compose -f docker-compose.local.yml exec redis redis-cli ping
 
 # Restart all services
-docker compose -f docker-compose.local.yml restart
+docker-compose -f docker-compose.local.yml restart
 
 # Check data directories
 ls -la data/ postgres_data/ redis_data/
@@ -514,19 +525,19 @@ For **named volumes version**:
 
 ```bash
 # Check container status
-docker compose ps
+docker-compose ps
 
 # View detailed logs
-docker compose logs --tail=100 sub2api
+docker-compose logs --tail=100 sub2api
 
 # Check database connection
-docker compose exec postgres pg_isready
+docker-compose exec postgres pg_isready
 
 # Check Redis connection
-docker compose exec redis redis-cli ping
+docker-compose exec redis redis-cli ping
 
 # Restart all services
-docker compose restart
+docker-compose restart
 ```
 
 ### Binary Install

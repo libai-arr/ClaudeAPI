@@ -12,6 +12,7 @@ ARG ALPINE_IMAGE=alpine:3.21
 ARG POSTGRES_IMAGE=postgres:18-alpine
 ARG GOPROXY=https://goproxy.cn,direct
 ARG GOSUMDB=sum.golang.google.cn
+ARG REPO_URL=https://github.com/Wei-Shaw/sub2api
 
 # -----------------------------------------------------------------------------
 # Stage 1: Frontend Builder
@@ -24,11 +25,12 @@ WORKDIR /app/frontend
 RUN corepack enable && corepack prepare pnpm@9 --activate
 
 # Install dependencies first (better caching)
-COPY frontend/package.json frontend/pnpm-lock.yaml ./
+COPY frontend/package.json frontend/pnpm-lock.yaml frontend/pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # Copy frontend source and build
 COPY frontend/ ./
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN pnpm run build
 
 # -----------------------------------------------------------------------------
@@ -86,7 +88,7 @@ FROM ${ALPINE_IMAGE}
 # Labels
 LABEL maintainer="Wei-Shaw <github.com/Wei-Shaw>"
 LABEL description="Sub2API - AI API Gateway Platform"
-LABEL org.opencontainers.image.source="https://github.com/Wei-Shaw/sub2api"
+LABEL org.opencontainers.image.source="${REPO_URL}"
 
 # Install runtime dependencies
 RUN apk add --no-cache \

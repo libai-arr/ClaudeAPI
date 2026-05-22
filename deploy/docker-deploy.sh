@@ -21,7 +21,7 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # GitHub raw content base URL
-GITHUB_RAW_URL="https://raw.githubusercontent.com/Wei-Shaw/sub2api/main/deploy"
+GITHUB_RAW_URL="https://raw.githubusercontent.com/libai-arr/ClaudeAPI/main/deploy"
 
 # Print colored message
 print_info() {
@@ -104,6 +104,9 @@ main() {
     JWT_SECRET=$(generate_secret)
     TOTP_ENCRYPTION_KEY=$(generate_secret)
     POSTGRES_PASSWORD=$(generate_secret)
+    REPO_OWNER=$(echo "${GITHUB_RAW_URL}" | sed -E 's#https://raw.githubusercontent.com/([^/]+)/([^/]+)/.*#\1#')
+    REPO_OWNER_LOWER=$(echo "${REPO_OWNER}" | tr '[:upper:]' '[:lower:]')
+    SUB2API_IMAGE="ghcr.io/${REPO_OWNER_LOWER}/sub2api:main"
 
     # Create .env from .env.example
     cp .env.example .env
@@ -111,11 +114,13 @@ main() {
     # Update .env with generated secrets (cross-platform compatible)
     if sed --version >/dev/null 2>&1; then
         # GNU sed (Linux)
+        sed -i "s#^SUB2API_IMAGE=.*#SUB2API_IMAGE=${SUB2API_IMAGE}#" .env
         sed -i "s/^JWT_SECRET=.*/JWT_SECRET=${JWT_SECRET}/" .env
         sed -i "s/^TOTP_ENCRYPTION_KEY=.*/TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY}/" .env
         sed -i "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/" .env
     else
         # BSD sed (macOS)
+        sed -i '' "s#^SUB2API_IMAGE=.*#SUB2API_IMAGE=${SUB2API_IMAGE}#" .env
         sed -i '' "s/^JWT_SECRET=.*/JWT_SECRET=${JWT_SECRET}/" .env
         sed -i '' "s/^TOTP_ENCRYPTION_KEY=.*/TOTP_ENCRYPTION_KEY=${TOTP_ENCRYPTION_KEY}/" .env
         sed -i '' "s/^POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/" .env
@@ -136,6 +141,7 @@ main() {
     echo "=========================================="
     echo ""
     echo "Generated secure credentials:"
+    echo "  SUB2API_IMAGE:         ${SUB2API_IMAGE}"
     echo "  POSTGRES_PASSWORD:     ${POSTGRES_PASSWORD}"
     echo "  JWT_SECRET:            ${JWT_SECRET}"
     echo "  TOTP_ENCRYPTION_KEY:   ${TOTP_ENCRYPTION_KEY}"
@@ -152,8 +158,9 @@ main() {
     echo "  redis_data/               - Redis data"
     echo ""
     echo "Next steps:"
-    echo "  1. (Optional) Edit .env to customize configuration"
-    echo "  2. Start services:"
+    echo "  1. (Optional) Edit .env to customize configuration or pin SUB2API_IMAGE"
+    echo "  2. Pull image and start services:"
+    echo "     docker-compose pull"
     echo "     docker-compose up -d"
     echo ""
     echo "  3. View logs:"
