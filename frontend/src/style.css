@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Blockdole';
+  src: url('./assets/fonts/blockdole.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   * {
     @apply border-gray-200 dark:border-dark-700;
@@ -9,11 +17,13 @@
 
   html {
     @apply scroll-smooth antialiased;
+    font-family: 'Blockdole', ui-sans-serif, system-ui, sans-serif;
   }
 
   body {
     @apply bg-gray-50 text-gray-900 dark:bg-dark-950 dark:text-gray-100;
     @apply min-h-screen;
+    font-family: inherit;
   }
 
   /* 自定义滚动条 - 仅针对 Firefox，避免 Chrome 取消 webkit 的全局定制 */

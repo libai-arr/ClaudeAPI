@@ -35,10 +35,10 @@
           >
             <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
           </div>
-          <h1 class="text-gradient mb-2 text-3xl font-bold">
+          <h1 class="text-gradient mb-2 text-3xl font-bold" style="font-family: sans-serif !important;">
             {{ siteName }}
           </h1>
-          <p class="text-sm text-gray-500 dark:text-dark-400">
+          <p class="text-sm text-gray-500 dark:text-dark-400" v-if="!siteSubtitle">
             {{ siteSubtitle }}
           </p>
         </template>

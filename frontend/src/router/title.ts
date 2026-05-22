@@ -10,12 +10,14 @@ export function resolveDocumentTitle(routeTitle: unknown, siteName?: string, tit
   if (typeof titleKey === 'string' && titleKey.trim()) {
     const translated = i18n.global.t(titleKey)
     if (translated && translated !== titleKey) {
-      return `${translated} - ${normalizedSiteName}`
+      // return `${translated} - ${normalizedSiteName}`
+      return `${normalizedSiteName}`
     }
   }
 
   if (typeof routeTitle === 'string' && routeTitle.trim()) {
-    return `${routeTitle.trim()} - ${normalizedSiteName}`
+    // return `${routeTitle.trim()} - ${normalizedSiteName}`
+    return `${normalizedSiteName}`
   }
 
   return normalizedSiteName

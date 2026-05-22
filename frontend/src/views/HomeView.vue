@@ -40,9 +40,17 @@
     <header class="relative z-20 px-6 py-4">
       <nav class="mx-auto flex max-w-6xl items-center justify-between">
         <!-- Logo -->
-        <div class="flex items-center">
-          <div class="h-10 w-10 overflow-hidden rounded-xl shadow-md">
+        <div class="flex min-w-0 items-center gap-3">
+          <div class="h-10 w-10 flex-shrink-0 overflow-hidden rounded-xl shadow-md">
             <img :src="siteLogo || '/logo.png'" alt="Logo" class="h-full w-full object-contain" />
+          </div>
+          <div class="min-w-0">
+            <div class="truncate text-lg font-semibold leading-none tracking-tight sm:text-2xl" style="font-family: sans-serif !important">
+              <span class="text-primary-500 dark:text-primary-400">{{ siteNameParts.primary }}</span>
+              <span v-if="siteNameParts.secondary" class="text-gray-900 dark:text-white" >
+                {{ siteNameParts.secondary }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -66,11 +74,19 @@
           <!-- Theme Toggle -->
           <button
             @click="toggleTheme"
-            class="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 dark:text-dark-400 dark:hover:bg-dark-800 dark:hover:text-white"
+            class="theme-toggle"
+            :class="{ 'theme-toggle-dark': isDark }"
             :title="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+            :aria-label="isDark ? t('home.switchToLight') : t('home.switchToDark')"
+            :aria-pressed="isDark"
+            type="button"
           >
-            <Icon v-if="isDark" name="sun" size="md" />
-            <Icon v-else name="moon" size="md" />
+            <span class="theme-toggle-track">
+              <span class="theme-toggle-thumb">
+                <Icon v-if="isDark" name="moon" size="sm" class="theme-toggle-icon" />
+                <Icon v-else name="sun" size="sm" class="theme-toggle-icon" />
+              </span>
+            </span>
           </button>
 
           <!-- Login / Dashboard Button -->
@@ -117,13 +133,18 @@
         <div class="mb-12 flex flex-col items-center justify-between gap-12 lg:flex-row lg:gap-16">
           <!-- Left: Text Content -->
           <div class="flex-1 text-center lg:text-left">
-            <h1
-              class="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl lg:text-6xl"
+            <h6
+              class="mb-4 text-4xl font-bold text-gray-900 dark:text-white md:text-5xl" style="font-weight: bold;"
             >
-              {{ siteName }}
-            </h1>
-            <p class="mb-8 text-lg text-gray-600 dark:text-dark-300 md:text-xl">
+            统一的大模型接口网关
+              <!-- {{ siteName }} -->
+            </h6>
+            <p class="mb-8 text-lg text-gray-600 dark:text-dark-300 md:text-xl" v-if="!siteSubtitle">
               {{ siteSubtitle }}
+            </p>
+
+            <p class="mb-8 text-lg text-gray-600 dark:text-dark-300 md:text-xl">
+              一个面向开发者与团队的统一 AI API Gateway，强调稳定高性能中转能力与多模型统一接入体验。 你可以在同一个用户门户里完成密钥管理、订阅购买、额度查看、请求追踪与模型切换。
             </p>
 
             <!-- CTA Button -->
@@ -378,7 +399,7 @@
         class="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left"
       >
         <p class="text-sm text-gray-500 dark:text-dark-400">
-          &copy; {{ currentYear }} {{ siteName }}. {{ t('home.footer.allRightsReserved') }}
+          {{ siteName }} &copy; 2025-{{ currentYear }} All Rights Reserved.
         </p>
         <div class="flex items-center gap-4">
           <a
@@ -418,6 +439,31 @@ const appStore = useAppStore()
 
 // Site settings - directly from appStore (already initialized from injected config)
 const siteName = computed(() => appStore.cachedPublicSettings?.site_name || appStore.siteName || 'Sub2API')
+const siteNameParts = computed(() => {
+  const trimmedName = siteName.value.trim()
+  const spaceIndex = trimmedName.indexOf(' ')
+
+  if (spaceIndex > 0) {
+    return {
+      primary: trimmedName.slice(0, spaceIndex),
+      secondary: trimmedName.slice(spaceIndex + 1)
+    }
+  }
+
+  const camelIndex = trimmedName.slice(1).search(/[A-Z]/)
+  if (camelIndex >= 0) {
+    const splitIndex = camelIndex + 1
+    return {
+      primary: trimmedName.slice(0, splitIndex),
+      secondary: trimmedName.slice(splitIndex)
+    }
+  }
+
+  return {
+    primary: trimmedName,
+    secondary: ''
+  }
+})
 const siteLogo = computed(() => appStore.cachedPublicSettings?.site_logo || appStore.siteLogo || '')
 const siteSubtitle = computed(() => appStore.cachedPublicSettings?.site_subtitle || 'AI API Gateway Platform')
 const docUrl = computed(() => appStore.cachedPublicSettings?.doc_url || appStore.docUrl || '')
@@ -433,7 +479,7 @@ const isHomeContentUrl = computed(() => {
 const isDark = ref(document.documentElement.classList.contains('dark'))
 
 // GitHub URL
-const githubUrl = 'https://github.com/Wei-Shaw/sub2api'
+const githubUrl = 'https://github.com/libai-arr/ClaudeAPI'
 
 // Auth state
 const isAuthenticated = computed(() => authStore.isAuthenticated)
@@ -481,6 +527,94 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+}
+
+.theme-toggle-track {
+  display: inline-flex;
+  align-items: center;
+  width: 42px;
+  height: 22px;
+  padding: 2px;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.08);
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.theme-toggle-thumb {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: #ffffff;
+  color: #6b7280;
+  box-shadow:
+    0 1px 2px rgba(15, 23, 42, 0.18),
+    0 1px 1px rgba(15, 23, 42, 0.08);
+  transform: translateX(0);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.theme-toggle-dark .theme-toggle-track {
+  background: #111827;
+  border-color: rgba(71, 85, 105, 0.7);
+  box-shadow:
+    inset 0 1px 2px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.theme-toggle-dark .theme-toggle-thumb {
+  transform: translateX(20px);
+  background: #0f172a;
+  color: #f8fafc;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+.theme-toggle:hover .theme-toggle-track {
+  border-color: rgba(20, 184, 166, 0.45);
+}
+
+.theme-toggle:focus-visible {
+  outline: none;
+}
+
+.theme-toggle:focus-visible .theme-toggle-track {
+  box-shadow:
+    0 0 0 3px rgba(20, 184, 166, 0.2),
+    inset 0 1px 2px rgba(15, 23, 42, 0.08);
+}
+
+.theme-toggle-dark:focus-visible .theme-toggle-track {
+  box-shadow:
+    0 0 0 3px rgba(45, 212, 191, 0.2),
+    inset 0 1px 2px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.theme-toggle-icon {
+  pointer-events: none;
+}
+
 /* Terminal Container */
 .terminal-container {
   position: relative;
