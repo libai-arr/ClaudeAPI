@@ -53,6 +53,7 @@ describe('ModelDistributionChart', () => {
       total_tokens: 1000,
       cost: 1.5,
       actual_cost: 0.2,
+      account_cost: 0.1,
     },
     {
       model: 'model-b',
@@ -64,7 +65,8 @@ describe('ModelDistributionChart', () => {
       total_tokens: 500,
       cost: 0.5,
       actual_cost: 1.4,
-    },
+      account_cost: 0.7,
+    }
   ]
 
   it('uses total_tokens and token ordering by default', () => {
