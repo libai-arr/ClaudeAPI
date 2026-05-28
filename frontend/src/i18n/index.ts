@@ -4,8 +4,7 @@ type LocaleCode = 'en' | 'zh'
 
 type LocaleMessages = Record<string, any>
 
-const LOCALE_KEY = 'sub2api_locale'
-const DEFAULT_LOCALE: LocaleCode = 'en'
+const DEFAULT_LOCALE: LocaleCode = 'zh'
 
 const localeLoaders: Record<LocaleCode, () => Promise<{ default: LocaleMessages }>> = {
   en: () => import('./locales/en'),
@@ -17,16 +16,6 @@ function isLocaleCode(value: string): value is LocaleCode {
 }
 
 function getDefaultLocale(): LocaleCode {
-  const saved = localStorage.getItem(LOCALE_KEY)
-  if (saved && isLocaleCode(saved)) {
-    return saved
-  }
-
-  const browserLang = navigator.language.toLowerCase()
-  if (browserLang.startsWith('zh')) {
-    return 'zh'
-  }
-
   return DEFAULT_LOCALE
 }
 
@@ -60,16 +49,14 @@ export async function initI18n(): Promise<void> {
 }
 
 export async function setLocale(locale: string): Promise<void> {
-  if (!isLocaleCode(locale)) {
+  if (!isLocaleCode(locale) || locale !== DEFAULT_LOCALE) {
     return
   }
 
   await loadLocaleMessages(locale)
   i18n.global.locale.value = locale
-  localStorage.setItem(LOCALE_KEY, locale)
   document.documentElement.setAttribute('lang', locale)
 
-  // 同步更新浏览器页签标题，使其跟随语言切换
   const { resolveDocumentTitle } = await import('@/router/title')
   const { default: router } = await import('@/router')
   const { useAppStore } = await import('@/stores/app')

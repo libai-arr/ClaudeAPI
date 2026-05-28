@@ -14,9 +14,11 @@ export default {
     heroSubtitle: '一个密钥，畅用多个 AI 模型',
     heroDescription: '无需管理多个订阅账号，一站式接入 Claude、GPT、Gemini 等主流 AI 服务',
     tags: {
-      subscriptionToApi: '订阅转 API',
-      stickySession: '会话保持',
-      realtimeBilling: '按量计费'
+      subscriptionToApi: 'Claude / GPT / Gemini',
+      stickySession: '稳定高性能中转 API',
+      realtimeBilling: 'OpenAI Compatible API',
+      realtimeBilling1: '统一订阅与支付',
+      realtimeBilling2: '请求状态可视化'
     },
     // 用户痛点区块
     painPoints: {
@@ -90,8 +92,8 @@ export default {
       }
     },
     providers: {
-      title: '已支持的 AI 模型',
-      description: '一个 API，多种选择',
+      title: '一个 API，多种选择',
+      description: '兼容主流模型调用路径，登录后即可在统一入口下使用。',
       supported: '已支持',
       soon: '即将推出',
       claude: 'Claude',

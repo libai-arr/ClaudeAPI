@@ -56,9 +56,6 @@
 
         <!-- Nav Actions -->
         <div class="flex items-center gap-3">
-          <!-- Language Switcher -->
-          <LocaleSwitcher />
-
           <!-- Doc Link -->
           <a
             v-if="docUrl"
@@ -147,6 +144,31 @@
               一个面向开发者与团队的统一 AI API Gateway，强调稳定高性能中转能力与多模型统一接入体验。 你可以在同一个用户门户里完成密钥管理、订阅购买、额度查看、请求追踪与模型切换。
             </p>
 
+            <div class="mb-8 rounded-[28px] border border-primary-200/70 bg-white/75 p-5 text-left shadow-[0_20px_60px_-24px_rgba(20,184,166,0.45)] backdrop-blur-md dark:border-primary-500/20 dark:bg-dark-900/70">
+              <div class="mb-4 inline-flex items-center rounded-full border border-primary-200 bg-primary-50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-primary-600 dark:border-primary-500/30 dark:bg-primary-500/10 dark:text-primary-300">
+                新手礼包
+              </div>
+              <div class="space-y-3">
+                <div>
+                  <h3 class="text-xl font-semibold text-gray-900 dark:text-white md:text-2xl">注册即送新用户体验礼包</h3>
+                  <p class="mt-2 text-sm leading-6 text-gray-600 dark:text-dark-300 md:text-base">
+                    首次注册即可领取体验额度，快速上手模型调用、密钥管理与订阅购买流程。
+                  </p>
+                </div>
+                <div class="flex flex-wrap gap-2.5">
+                  <span class="inline-flex items-center rounded-full bg-primary-500 px-3.5 py-1.5 text-sm font-semibold text-white shadow-sm shadow-primary-500/30">
+                    USD 1/天
+                  </span>
+                  <span class="inline-flex items-center rounded-full border border-primary-200/80 bg-primary-50/80 px-3.5 py-1.5 text-sm font-medium text-primary-700 dark:border-primary-500/20 dark:bg-primary-500/10 dark:text-primary-200">
+                    另送钱包余额 US$1.00
+                  </span>
+                  <span class="inline-flex items-center rounded-full border border-gray-200/80 bg-white/85 px-3.5 py-1.5 text-sm font-medium text-gray-600 dark:border-dark-700 dark:bg-dark-800/80 dark:text-dark-300">
+                    仅首次注册账号可领取
+                  </span>
+                </div>
+              </div>
+            </div>
+
             <!-- CTA Button -->
             <div>
               <router-link
@@ -170,7 +192,7 @@
                     <span class="btn-minimize"></span>
                     <span class="btn-maximize"></span>
                   </div>
-                  <span class="terminal-title">terminal</span>
+                  <span class="terminal-title">终端</span>
                 </div>
                 <!-- Terminal content -->
                 <div class="terminal-body">
@@ -202,7 +224,7 @@
           <div
             class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
           >
-            <Icon name="swap" size="sm" class="text-primary-500" />
+            <Icon name="brain" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
               t('home.tags.subscriptionToApi')
             }}</span>
@@ -210,7 +232,7 @@
           <div
             class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
           >
-            <Icon name="shield" size="sm" class="text-primary-500" />
+            <Icon name="server" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
               t('home.tags.stickySession')
             }}</span>
@@ -218,9 +240,25 @@
           <div
             class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
           >
-            <Icon name="chart" size="sm" class="text-primary-500" />
+            <Icon name="link" size="sm" class="text-primary-500" />
             <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
               t('home.tags.realtimeBilling')
+            }}</span>
+          </div>
+          <div
+            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
+          >
+            <Icon name="creditCard" size="sm" class="text-primary-500" />
+            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
+              t('home.tags.realtimeBilling1')
+            }}</span>
+          </div>
+          <div
+            class="inline-flex items-center gap-2.5 rounded-full border border-gray-200/50 bg-white/80 px-5 py-2.5 shadow-sm backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/80"
+          >
+            <Icon name="chartBar" size="sm" class="text-primary-500" />
+            <span class="text-sm font-medium text-gray-700 dark:text-dark-200">{{
+              t('home.tags.realtimeBilling2')
             }}</span>
           </div>
         </div>
@@ -375,7 +413,7 @@
             >
           </div>
           <!-- More - Coming Soon -->
-          <div
+          <!-- <div
             class="flex items-center gap-2 rounded-xl border border-gray-200/50 bg-white/40 px-5 py-3 opacity-60 backdrop-blur-sm dark:border-dark-700/50 dark:bg-dark-800/40"
           >
             <div
@@ -388,7 +426,7 @@
               class="rounded bg-gray-100 px-1.5 py-0.5 text-[10px] font-medium text-gray-500 dark:bg-dark-700 dark:text-dark-400"
               >{{ t('home.providers.soon') }}</span
             >
-          </div>
+          </div> -->
         </div>
       </div>
     </main>
@@ -399,15 +437,15 @@
         class="mx-auto flex max-w-6xl flex-col items-center justify-center gap-4 text-center sm:flex-row sm:text-left"
       >
         <p class="text-sm text-gray-500 dark:text-dark-400">
-          {{ siteName }} &copy; 2025-{{ currentYear }} All Rights Reserved.
+          {{ siteName }} &copy; {{ currentYear }} All Rights Reserved.
         </p>
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center justify-center gap-4">
           <a
             v-if="docUrl"
             :href="docUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
           >
             {{ t('home.docs') }}
           </a>
@@ -415,9 +453,21 @@
             :href="githubUrl"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
           >
-            GitHub
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.866-.013-1.699-2.782.605-3.369-1.343-3.369-1.343-.455-1.157-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.091-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.026 2.747-1.026.546 1.378.203 2.397.1 2.65.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .269.18.58.688.481A10.02 10.02 0 0022 12.017C22 6.484 17.523 2 12 2z" />
+            </svg>
+            <span>GitHub</span>
+          </a>
+          <a
+            href="https://sc58.cn"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-dark-400 dark:hover:text-white"
+          >
+            <img src="https://sc58.cn/img/favicon.png" alt="SC58" class="h-4 w-4 rounded-sm object-contain" />
+            <span>GeePay</span>
           </a>
         </div>
       </div>
@@ -429,7 +479,6 @@
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore, useAppStore } from '@/stores'
-import LocaleSwitcher from '@/components/common/LocaleSwitcher.vue'
 import Icon from '@/components/icons/Icon.vue'
 
 const { t } = useI18n()
